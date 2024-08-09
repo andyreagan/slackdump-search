@@ -1,0 +1,47 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: fix-byte-order-marker
+
+  - repo: https://github.com/python/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        args: [--line-length=100]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.1
+    hooks:
+      - id: mypy
+        # exclude: ^docs/conf.py
+        additional_dependencies:
+          # typing stuff
+          - types-python-dateutil
+        # args: [--check-untyped-defs]
+
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        # args: ["-d {extends: relaxed, rules: {line-length: {max: 120}}}"]
+        args: ["-c.yamllint.cfg"]
+        entry: bash -c 'yamllint "$@" || true' --
+
+  - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
+    rev: v0.1.0
+    hooks:
+      - id: dockerfilelint
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.5.7
+    hooks:
+      - id: ruff
+        args: [ --fix, --exit-non-zero-on-fix ]
+
+...

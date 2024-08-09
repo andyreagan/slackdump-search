@@ -1,0 +1,22 @@
+line-length = 100
+select = [
+    # Pyflakes
+    "F",
+    # Pycodestyle
+    "E",
+    "W",
+    # Comprehensions
+    "C",
+    # Bugbear
+    "B",
+    # isort
+    "I001",
+]
+ignore = ["E203", "E501"]
+
+respect-gitignore = false
+
+# [per-file-ignores]
+
+# [isort]
+# known_first_party=...
