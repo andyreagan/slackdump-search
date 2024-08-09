@@ -45,7 +45,7 @@ def search_in_stream(
                 yield (channel, user, message_id, message_text, url)
 
 
-def get_user_lookup(file_path):
+def get_user_lookup(file_path: str) -> dict[str, str]:
     user_lookup = {}
     with gzip.open(file_path, "rt") as f:
         for line in f:
@@ -57,7 +57,7 @@ def get_user_lookup(file_path):
     return user_lookup
 
 
-def get_channel_lookup(directory_path, user_lookup):
+def get_channel_lookup(directory_path: str, user_lookup: dict[str, str]) -> dict[str, str]:
     channel_lookup = {}
     for filename in os.listdir(directory_path):
         if filename.endswith(".json.gz"):
@@ -155,7 +155,7 @@ def generate_thread_url(channel: str, thread_id: str, message_id: str) -> str:
     return f"http://localhost:8080/archives/{channel}/{thread_id}#{message_id}"
 
 
-def write_html(body: str):
+def write_html(body: str) -> None:
     # Create an HTML file
     html_content = f"""
     <!DOCTYPE html>
@@ -286,7 +286,7 @@ def write_html(body: str):
     # print("The temporary HTML file has been deleted.")
 
 
-def search_folder(folder_path, search_term):
+def search_folder(folder_path: str, search_term: str) -> str | None:
     # Use glob to expand the pattern
     files = glob.glob(os.path.join(folder_path, "*.json.gz"))
     if not files:
