@@ -90,7 +90,7 @@ def get_channel_lookup(directory_path: str, user_lookup: dict[str, str]) -> dict
     return channel_lookup
 
 
-def search_json(file_stream: Iterable[str], search_term: str) -> str:
+def search_json(file_stream: Iterable[str], dir: str, search_term: str) -> str:
     """
     Search for a given term in a stream of JSON data and return an HTML string with the matching messages and their URLs.
     Args:
@@ -101,8 +101,8 @@ def search_json(file_stream: Iterable[str], search_term: str) -> str:
     """
     matches = list(search_in_stream(file_stream, search_term))
     html_output = f"<h2>Found {len(matches)} matches:</h2>"
-    user_lookup = get_user_lookup("slackdump_20240807_214838/users.json.gz")
-    channel_lookup = get_channel_lookup("slackdump_20240807_214838", user_lookup)
+    user_lookup = get_user_lookup(f"{dir}/users.json.gz")
+    channel_lookup = get_channel_lookup(dir, user_lookup)
     sorted_matches = sorted(matches, key=lambda x: x[2], reverse=True)
     for channel, user, message_id, message_text, url in sorted_matches:
         date_time = datetime.fromtimestamp(float(message_id)).strftime("%Y-%m-%d %H:%M:%S")
@@ -302,21 +302,22 @@ def search_folder(folder_path: str, search_term: str) -> str | None:
         print(f"Error: {stderr}", file=sys.stderr)
         return None
 
-    return search_json(stdout.splitlines(), search_term)
+    return search_json(stdout.splitlines(), folder_path, search_term)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 4:
         input_path = sys.argv[1]
-        search_term = sys.argv[2]
+        slackdump_folder = sys.argv[2]
+        search_term = sys.argv[3]
 
         if os.path.isdir(input_path):
             output = search_folder(input_path, search_term)
         elif input_path == "-":
-            output = search_json(sys.stdin, search_term)
+            output = search_json(sys.stdin, slackdump_folder, search_term)
         elif os.path.isfile(input_path):
             with open(input_path, "r") as file:
-                output = search_json(file, search_term)
+                output = search_json(file, slackdump_folder, search_term)
         else:
             print(f"Error: {input_path} is not a valid file or directory", file=sys.stderr)
             sys.exit(1)
@@ -324,7 +325,9 @@ if __name__ == "__main__":
         if output is not None:
             write_html(output)
     else:
-        print("Usage: python slack_search.py <JSON file_path or directory> <search term>")
         print(
-            'or use stdin: zgrep -ih "$SEARCH_TERM" slackdump_20240807_214838/*.json.gz | python3 slack_search.py - "$SEARCH_TERM"'
+            "Usage: python slack_search.py <JSON file_path or directory> <directory> <search term>"
+        )
+        print(
+            'or use stdin: zgrep -ih "$SEARCH_TERM" slackdump_20240807_214838/*.json.gz | python3 slack_search.py - slackdump_20240807_214838 "$SEARCH_TERM"'
         )

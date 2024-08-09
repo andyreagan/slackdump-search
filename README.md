@@ -28,7 +28,7 @@ The links assume that the viewer from slackdump is running on localhost:8080.
 Run slack search:
 
 ```
-python3 slack_search.py slackdump_20240807_214838 'email_name ILIKE'
+python3 slack_search.py slackdump_20240807_214838 slackdump_20240807_214838 'email_name ILIKE'
 ```
 
 I was looking for sql queries that I'd written (or been messaged)
